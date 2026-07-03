@@ -3,267 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>খসড়া রায় - অতিরিক্ত দায়রা জজ ২য় আদালত, বগুড়া</title>
+    <title>আদালতের রায় লেখার সফটওয়্যার</title>
     <style>
-        /* প্রিন্ট এবং ওয়েবের জন্য সাধারণ পেজ সেটআপ */
+        /* মূল বডির ডিজাইন */
         body {
+            font-family: 'Kalpurush', 'SolaimanLipi', 'Times New Roman', serif;
             background-color: #f0f0f0;
-            font-family: 'NikoshBAN', 'Kalpurush', Arial, sans-serif; /* NikoshBAN ফন্ট সেট করা হলো */
-            font-size: 15pt;
-            color: black;
+            color: #000;
             margin: 0;
             padding: 20px;
-            display: flex;
-            justify-content: center;
+            padding-top: 80px; /* ওপরের বাটনের জায়গার জন্য */
         }
 
-        /* লিগ্যাল পেজ (Legal Page) এবং ২ ইঞ্চি মার্জিন (2 inch margin) সেটআপ */
-        @page {
-            size: legal;
-            margin: 2in;
-        }
-
-        /* ওয়েব ভিউতে এ ফোর বা লিগ্যাল পেজের মত দেখানোর জন্য */
-        .page {
-            background-color: white;
-            width: 8.5in;
-            min-height: 14in; /* লিগ্যাল সাইজ */
-            padding: 2in; /* চারদিকে ২ ইঞ্চি মার্জিন */
-            box-sizing: border-box;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            outline: none; /* এডিট করার সময় বর্ডার সরাতে */
-        }
-
-        /* spacing 0 pt এবং line spacing সিঙ্গেল (single) */
-        p, div {
-            margin: 0;
-            padding: 0;
-            line-height: 1; /* Single line spacing */
-        }
-
-        /* প্যারাগ্রাফের মাঝে স্পেস থাকবে না এবং Justify হবে */
-        p {
-            text-align: justify;
-            text-indent: 0.5in; /* Intend বা প্রথম লাইনে ফাঁকা জায়গা */
-        }
-
-        /* যেসব লাইনে Indent হবে না তাদের জন্য ক্লাস */
-        .no-indent {
-            text-indent: 0;
-        }
-
-        /* টেক্সট এলাইনমেন্ট এবং বোল্ড ক্লাস */
-        .text-center { text-align: center; }
-        .text-left { text-align: left; }
-        .text-right { text-align: right; }
-        .text-justify { text-align: justify; }
-        .bold { font-weight: bold; }
-        .italic { font-style: italic; }
-        .underline { text-decoration: underline; }
-
-        /* সামান্য দূরত্বের জন্য */
-        .mb { margin-bottom: 15pt; }
-        .mt { margin-top: 15pt; }
-
-        /* স্ক্রিনে বাটন দেখানোর জন্য, প্রিন্টের সময় লুকানো থাকবে */
-        @media print {
-            body { background-color: white; padding: 0; display: block; }
-            .page { box-shadow: none; padding: 0; width: 100%; min-height: auto; }
-            .no-print { display: none; }
-        }
-
-        .action-buttons {
+        /* ওপরের ফিক্সড বাটন বার (টুলবার) */
+        .toolbar {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #2c3e50;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
 
-        button {
-            padding: 10px 15px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #0056b3;
+        /* বাটনের ডিজাইন */
+        .btn {
+            font-family: 'SolaimanLipi', sans-serif;
+            background-color: #27ae60;
             color: white;
             border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
             border-radius: 5px;
-            font-family: inherit;
+            transition: background 0.3s;
         }
-        button:hover { background-color: #004494; }
+        .btn-pdf { background-color: #2980b9; }
+        .btn-docs { background-color: #e67e22; }
+        .btn:hover { opacity: 0.9; }
+
+        /* কাগজের মতো দেখতে ডকুমেন্ট কন্টেইনার */
+        .document-container {
+            background-color: #ffffff;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 50px 60px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 1px solid #ccc;
+            outline: none; /* এডিট করার সময় বর্ডার হাইলাইট বন্ধ করার জন্য */
+        }
+
+        /* হেডার অংশ (আদালতের নাম) */
+        .court-header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .court-header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .court-header p {
+            margin: 5px 0 0;
+            font-size: 16px;
+        }
+
+        /* মামলার বিবরণ */
+        .case-details {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .case-details table {
+            width: 100%;
+        }
+        .case-details td {
+            vertical-align: top;
+            padding: 5px 0;
+        }
+
+        /* বাদী ও বিবাদী অংশ */
+        .parties {
+            text-align: center;
+            font-weight: bold;
+            margin: 20px 0;
+            font-size: 18px;
+        }
+
+        /* রায়ের শিরোনাম */
+        .judgment-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 22px;
+            text-decoration: underline;
+            margin: 30px 0;
+        }
+
+        /* মূল রায়ের বিষয়বস্তু */
+        .content {
+            text-align: justify;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        .content p {
+            margin-bottom: 15px;
+            text-indent: 40px;
+        }
+
+        /* বিচারকের স্বাক্ষর অংশ */
+        .signature-section {
+            margin-top: 60px;
+            text-align: right;
+        }
+        .signature-line {
+            display: inline-block;
+            border-top: 1px dashed #000;
+            padding-top: 5px;
+            text-align: center;
+            width: 250px;
+        }
+
+        /* তারিখ অংশ */
+        .date-section {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        /* প্রিন্ট করার সময় বাটন বারটি লুকিয়ে ফেলার নিয়ম */
+        @media print {
+            .toolbar { display: none; }
+            body { padding-top: 0; background-color: #fff; }
+            .document-container { box-shadow: none; border: none; padding: 0; margin: 0; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="no-print action-buttons">
-        <button onclick="window.print()">Print / Save as PDF</button>
-        <button onclick="copyForWord()">Copy for MS Word</button>
-        <span style="font-size: 12pt; background: #ffeb3b; padding: 10px; border-radius: 5px; color: black; max-width: 200px;">
-            নির্দেশনা: পেজের যেকোনো লেখায় ক্লিক করে সরাসরি এডিট করতে পারবেন।
-        </span>
+    <div class="toolbar">
+        <button class="btn" onclick="saveDocument()">💾 সংরক্ষণ করুন (Save)</button>
+        <button class="btn btn-pdf" onclick="printPDF()">📄 পিডিএফ প্রিন্ট (PDF)</button>
+        <button class="btn btn-docs" onclick="downloadDocs()">📝 ডকস ডাউনলোড (DOCS)</button>
     </div>
 
-    <div class="page" id="judgment-content" contenteditable="true">
+    <div class="document-container" id="judgment-doc" contenteditable="true">
         
-        <div class="text-center bold">
-            অতিরিক্ত দায়রা জজ ২য় আদালত, বগুড়া<br>
-            (ফৌজদারী আদিম এখতিয়ার)
-        </div>
-        <br>
-
-        <div class="text-left no-indent">
-            <span class="bold">জেলা:</span> বগুড়া।<br>
-            <span class="bold">আদালতের নাম:</span> অতিরিক্ত দায়রা জজ ২য় আদালত, বগুড়া।
-        </div>
-        <br>
-
-        <div class="text-left no-indent">
-            <span class="bold">উপস্থিত:</span> গোলাম মাহফুজ, অতিরিক্ত দায়রা জজ, ২য় আদালত, বগুড়া।<br>
-            <span class="bold">রায় ঘোষণার তারিখ:</span> [রায় ঘোষণার তারিখ DD/MM/YYYY] খ্রিস্টাব্দ।
-        </div>
-        <br>
-
-        <div class="text-center bold underline no-indent">
-            দায়রা মামলা নং- [দয়রা মামলা নম্বর]
-        </div>
-        <div class="text-center no-indent mb">
-            (সূত্র: বগুড়া সদর থানার মামলা নং-০৯, তারিখ- ০৫/০৯/২০১৭, যাহার জি.আর মামলা নং-৯৭০/১৭ (সদর))
+        <div class="court-header">
+            <h2>[আদালতের নাম লিখুন, যেমন: জেলা ও দায়রা জজ আদালত, ঢাকা]</h2>
+            <p><strong>উপস্থিত:</strong> [বিচারকের নাম ও পদবী]</p>
         </div>
 
-        <div class="text-center no-indent">
-            রাষ্ট্র<br>
-            <span class="italic">বনাম</span>
-        </div>
-        <div class="text-right no-indent mb">
-            .................................. [আসামি/আসামিগণ]
-        </div>
-
-        <div class="text-justify no-indent">
-            <strong>অভিযোগ-</strong> [যে ধারায় অভিযোগ গঠন করা হইয়াছে সেই ধারা লিখতে হবে] ধারার অধীন।
-        </div>
-        <div class="text-justify no-indent">
-            <strong>রাষ্ট্র পক্ষে:</strong> জনাব এম,এ, কে, ফজলুল হক, অতিরিক্ত পাবলিক প্রসিকিউটর।
-        </div>
-        <div class="text-justify no-indent mb">
-            <strong>আসামি পক্ষে:</strong> জনাব [আসামি পক্ষে আইনজীবীর নাম], বিজ্ঞ এডভোকেট।
+        <div class="case-details">
+            <table>
+                <tr>
+                    <td style="width: 50%;"><strong>মামলা নং:</strong> [দেওয়ানী মামলা নং ১০৫/২০২৩]</td>
+                    <td style="text-align: right;"><strong>সাল:</strong> [২০২৬]</td>
+                </tr>
+            </table>
         </div>
 
-        <div class="text-center bold underline no-indent">
-            রায়
+        <div class="parties">
+            [বাদীর নাম ও ঠিকানা]<br>
+            <span style="font-weight: normal; font-size: 16px;">......................................... বাদী / দরখাস্তকারী</span>
+            <br><br>
+            - বনাম -
+            <br><br>
+            [বিবাদীর নাম ও ঠিকানা]<br>
+            <span style="font-weight: normal; font-size: 16px;">......................................... বিবাদী / প্রতিপক্ষ</span>
         </div>
-        <p>
-            মামলায় প্রসিকিউশন পক্ষের সংক্ষিপ্ত বক্তব্য এই যে, [এখানে এজাহারের বক্তব্য বিস্তারিত লিখতে হবে।]
-        </p>
-        <p>
-            [যে থানায় মামলাটি দায়ের হইয়াছে সেই থানার নাম] এর ভারপ্রাপ্ত কর্মকর্তা কর্তৃক মামলাটি রুজু হওয়ার পর তদন্তকারী কর্মকর্তা [তদন্তকারী কর্মকর্তার নাম] মামলার তদন্তভার গ্রহণ করেন। তিনি ঘটনাস্থল পরিদর্শন করেন, সাক্ষীদের জবানবন্দী গ্রহণ করেন। তাহার তদন্তে আসামীর বিরুদ্ধে আনীত অভিযোগ প্রাথমিকভাবে সত্য বলিয়া প্রতীয়মান হওয়ায় আসামীর বিরুদ্ধে [ধারা সমূহ] ধারায় [থানার নাম]’র অভিযোগপত্র নং-[অভিযোগপত্র নং], তারিখ-[তারিখ] খ্রিঃ বিজ্ঞ আদালতে দাখিল করেন।
-        </p>
 
-        <div class="text-center bold underline no-indent mt">
-            চার্জ ও বিচার:
+        <div class="judgment-title">
+            রায় (Judgment)
         </div>
-        <p>
-            বিজ্ঞ আদালত আসামী [আসামি/আসামিগণের নাম এবং অভিযোগের ধারা]-এর বিরুদ্ধে ১৯৯০ সালের মাদকদ্রব্য নিয়ন্ত্রণ আইনের ২২(গ) ধারায় অভিযোগ গঠন করেন। উপস্থিত আসামি [উপস্থিত আসামীর নাম]’কে গঠিত অভিযোগ পাঠ ও ব্যাখ্যা করিয়া শুনানো হইলে তিনি নিজেকে নির্দোর্ষ দাবী করিয়া বিচার প্রার্থণা করেন। মামলাটি বিচারের জন্য প্রসিকিউশন পক্ষ হইতে মোট [সাক্ষীর সংখ্যা (কথায়)] জন সাক্ষীকে আদালতে উপস্থাপন করা হইয়াছে।
-        </p>
-        <p>
-            পি.ডব্লিউ-১ [সাক্ষীর নাম] <strong>জবানবন্দিতে বলেন যে,</strong> [জবানবন্দির বিস্তারিত বিবরণ...]
-        </p>
-        <p>
-            <strong>আসামিপক্ষের জেরায় তিনি জেরায় বলেন যে,</strong> [জেরার বিস্তারিত বিবরণ...]
-        </p>
 
-        <div class="text-center bold underline no-indent mt">
-            ৩৪২ ধারায় আসামির পরীক্ষা:
+        <div class="content">
+            <p>
+                <strong>মামলার সংক্ষিপ্ত বিবরণ:</strong> অত্র মামলাটি [মামলার বিষয়বস্তু] সংক্রান্ত। বাদীপক্ষের অভিযোগ অনুযায়ী, বিবাদী গত [তারিখ] তারিখে... (এখানে মামলার মূল ঘটনা বা Facts বিস্তারিত লিখতে হবে)।
+            </p>
+            <p>
+                <strong>বিচার্য বিষয় (Issues):</strong> উভয় পক্ষের দাখিলকৃত কাগজপত্র ও সাক্ষ্য-প্রমাণ পর্যালোচনায় অত্র মামলার নিষ্পত্তির জন্য নিম্নোক্ত বিচার্য বিষয়সমূহ গঠন করা হলো: ১. [প্রথম বিচার্য বিষয়], ২. [দ্বিতীয় বিচার্য বিষয়]।
+            </p>
+            <p>
+                <strong>বিশ্লেষণ ও সিদ্ধান্ত:</strong> বাদীপক্ষ তাদের দাবির সমর্থনে [সাক্ষীর সংখ্যা] জন সাক্ষী উপস্থাপন করেছেন এবং দলিলাদি প্রদর্শন করেছেন। অন্যদিকে বিবাদীপক্ষ... (এখানে সাক্ষ্য-প্রমাণ ও আইনি বিশ্লেষণ লিখতে হবে)। সার্বিক পর্যালোচনায় আদালত এই সিদ্ধান্তে উপনীত হয়েছে যে...
+            </p>
+            <p>
+                <strong>আদেশ (Order):</strong> অতএব, অত্র আদালত নির্দেশ দিচ্ছে যে... (এখানে চূড়ান্ত রায় বা আদেশের কথা উল্লেখ করতে হবে)। মামলাটি [বিনা খরচে] নিষ্পত্তি করা হলো।
+            </p>
         </div>
-        <p>
-            সাক্ষ্য গ্রহণ সমাপ্ত হইবার পর আসামি [আসামি/আসামিগণের নাম]’কে ফৌজদারী কার্যবিধি, ১৮৯৮ এর ৩৪২ ধারায় পরীক্ষা করা হইলে তিনি নিজেকে নির্দোষ দাবী করিয়া বিচার প্রার্থণা করেন এবং কোন কাগজ দাখিল করিবেন না বা কোন সাফাই সাক্ষী উপস্থাপন করিবেন না মর্মে অত্র আদালতকে অবহিত করেন।
-        </p>
 
-        <div class="text-center bold underline no-indent mt">
-            বিচার্য বিষয়ঃ
+        <div class="signature-section">
+            <div class="signature-line">
+                স্বাক্ষর ও সিল<br>
+                <strong>[বিচারকের নাম]</strong><br>
+                [পদবী]<br>
+                [আদালতের নাম]
+            </div>
         </div>
-        <div class="no-indent">
-            (১) প্রসিকিউশনপক্ষ আসামি [আসামির নাম] এর বিরুদ্ধে আনীত অভিযোগ সন্দেহাতীতভাবে প্রমাণ করিতে সক্ষম হইয়াছেন কিনা?<br>
-            (২) বর্ণিত অপরাধে আসামী [আসামির নাম]’কে [অভিযোগের ধারা] ধারায় দোষী সাব্যস্ত করিয়া সাজা প্রদান করা যায় কিনা?
-        </div>
-        <br>
 
-        <div class="text-center bold underline no-indent">
-            আলোচনা ও সিদ্ধান্ত:
+        <div class="date-section">
+            <strong>রায়ের তারিখ:</strong> [তারিখ লিখুন]
         </div>
-        <p>
-            আলোচনা ও সিদ্ধান্ত গ্রহনের সুবিধার্থে এবং পুনরাবৃত্তি পরিহার কল্পে ১/২ নং নির্নেয় বিষয় দুইটি একত্রে লওয়া হইল।
-        </p>
-        <p>
-            মামলার এজাহার, অভিযোগপত্র, জব্দ তালিকা, প্রসিকিউশনপক্ষে উপস্থাপিত সাক্ষ্যাদি ও নথি পর্যালোচনা করিলাম। পর্যালোচনায় দেখা যায় যে, [আদালতের বিস্তারিত ফাইন্ডিংস...]
-        </p>
-        <p>
-            সার্বিকভাবে বলা যায়, প্রসিকিউশন পক্ষ উপযুক্ত ও নিরপেক্ষ সাক্ষ্যপ্রমাণ দ্বারা আসামির বিরুদ্ধে আনিত অভিযোগ প্রমাণ করিতে ব্যর্থ হইয়াছেন। বিধায় আসামি খালাস পাওয়ার হকদার।
-        </p>
-        <p>
-            আলোচ্য বিচার্য বিষয়দ্বয় প্রসিকিউশন পক্ষের প্রতিকূলে নিষ্পত্তি করা হইলো।
-        </p>
-
-        <div class="text-center bold no-indent mt">
-            অতএব<br>
-            আদেশ হয় যে,
-        </div>
-        <p>
-            অত্র মামলার আসামি ১। মোঃ রুবেল এবং ২। মোঃ রবিউল-এর বিরুদ্ধে প্রসিকিউশন কর্তৃক আনীত মাদকদ্রব্য নিয়ন্ত্রণ আইন, ১৯৯০ এর ১৯(১) টেবিলের ৯(খ) ধারার অভিযোগ সন্দেহাতীতভাবে প্রমাণিত না হওয়ায় তাহাদিগকেও উক্ত অভিযোগের দায় হইতে খালাস প্রদান করা হইল।
-        </p>
-        <p>
-            আসামী ও জামিনদারগণকে জামিননামার দায় হইতে অব্যাহতি প্রদান করা হইল।
-        </p>
-        <p>
-            মামলায় অভিযোগপত্রের ৫নং কলামের ‘১’ ক্রমিকে বর্ণিত ১০ পিস ইয়াবা রাষ্ট্রের অনুকূলে বাজেয়াপ্ত (confiscated) করা হইল। উক্ত আলামত বিধি মোতাবেক ধ্বংস করা হউক।
-        </p>
-        <p>
-            অবগতি ও কার্যার্থে রায়ের অনুলিপি বগুড়া জেলার বিজ্ঞ চীফ জুডিসিয়াল ম্যাজিস্ট্রেট এবং ভারপ্রাপ্ত পুলিশ কর্মকর্তা, মালখানা বরাবর প্রেরণ করা হউক।
-        </p>
-
-        <div class="no-indent mt">
-            আমার কথামত কম্পোজকৃত<br>
-            ও আমার দ্বারা সংশোধিত।
-        </div>
-        <br><br><br>
-
-        <table style="width: 100%; border: none; border-collapse: collapse;">
-            <tr>
-                <td style="width: 50%; text-align: center; vertical-align: top; border: none; padding: 0;">
-                    [রায়ের তারিখ] খ্রি.<br>
-                    (গোলাম মাহফুজ)<br>
-                    অতিরিক্ত দায়রা জজ, ২য় আদালত,<br>
-                    বগুড়া。<br>
-                    (ভারপ্রাপ্ত)
-                </td>
-                <td style="width: 50%; text-align: center; vertical-align: top; border: none; padding: 0;">
-                    [রায়ের তারিখ] খ্রি.<br>
-                    (গোলাম মাহফুজ)<br>
-                    অতিরিক্ত দায়রা জজ, ২য় আদালত,<br>
-                    বগুড়া。<br>
-                    (ভারপ্রাপ্ত)
-                </td>
-            </tr>
-        </table>
 
     </div>
 
     <script>
-        function copyForWord() {
-            var content = document.getElementById('judgment-content').innerHTML;
-            var html = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Judgment Export</title></head><body>" + content + "</body></html>";
+        // ১. সেভ বাটনের কাজ (LocalStorage-এ সেভ হবে)
+        function saveDocument() {
+            const content = document.getElementById('judgment-doc').innerHTML;
+            localStorage.setItem('court_judgment_data', content);
+            alert('আপনার লেখা রায়টি সফলভাবে ব্রাউজারে সংরক্ষণ করা হয়েছে!');
+        }
+
+        // পেজ লোড হলে আগের সেভ করা লেখা স্বয়ংক্রিয়ভাবে চলে আসবে
+        window.onload = function() {
+            const savedContent = localStorage.getItem('court_judgment_data');
+            if (savedContent) {
+                document.getElementById('judgment-doc').innerHTML = savedContent;
+            }
+        };
+
+        // ২. পিডিএফ প্রিন্ট বাটনের কাজ
+        function printPDF() {
+            window.print();
+        }
+
+        // ৩. ডকস (Word Document) ফরম্যাটে ডাউনলোড করার কাজ
+        function downloadDocs() {
+            const content = document.getElementById('judgment-doc').innerHTML;
             
-            var blob = new Blob(['\ufeff', html], {
+            // ডক ফাইলের জন্য এইচটিএমএল ফরম্যাট তৈরি
+            const htmlTemplate = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head>
+                <meta charset="utf-8">
+                <title>Court Judgment</title>
+                <style>
+                    body { font-family: 'Arial', 'Times New Roman', sans-serif; line-height: 1.6; }
+                    .court-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+                    .parties { text-align: center; margin: 20px 0; font-weight: bold; }
+                    .judgment-title { text-align: center; font-weight: bold; text-decoration: underline; margin: 30px 0; font-size: 18pt; }
+                    .content { text-align: justify; }
+                    .content p { margin-bottom: 15px; text-indent: 30px; }
+                    .signature-section { text-align: right; margin-top: 50px; }
+                    .signature-line { display: inline-block; border-top: 1px dashed #000; padding-top: 5px; text-align: center; width: 250px; }
+                </style>
+            </head>
+            <body>
+                ${content}
+            </body>
+            </html>`;
+
+            // ফাইল ডাউনলোডের প্রসেস
+            const blob = new Blob(['\ufeff' + htmlTemplate], {
                 type: 'application/msword'
             });
-            var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
-            var downloadLink = document.createElement("a");
-            document.body.appendChild(downloadLink);
-            downloadLink.href = url;
-            downloadLink.download = 'Draft_Judgment.doc';
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'আদালতের_রায়.doc'; // ফাইলের নাম
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
     </script>
+
 </body>
 </html>
